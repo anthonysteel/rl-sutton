@@ -62,13 +62,25 @@
 (defun random-list (n mean std-dev)
   (loop for i from 1 to n collect (normal-random mean std-dev)))
 
-(defun round-to-tenths (num)
-  (float (/ (round (* num  10)) 10)))
+(defun round-to-hundreths (num)
+  (float (/ (round (* num  100)) 100)))
 
-(defvar rand-l (sort (random-list 1000 0 1) #'<))
+(setf l (sort (random-list 1000000 0 1) #'<))
 
-(defun bin-list-by-tenths (l)
-  (loop for elem in l collect (round-to-tenths elem)))
+(defun bin-list-by-hundreths (l)
+  (loop for elem in l collect (round-to-hundreths elem)))
 
-(defvar tenths-l (bin-list-by-tenths rand-l))
+(setq l (bin-list-by-hundreths l))
+
+(defun bin (l)
+  (let ((prev nil)
+	(bins nil)
+	(times 1))
+    (loop for elem in l
+	  do (if (eq prev elem)
+		 (incf times)
+		 (progn (setf bins (append bins (list times)))
+			(setf times 1)))
+	     (setf prev elem))
+    bins))
 
